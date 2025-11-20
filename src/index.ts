@@ -1,42 +1,64 @@
-import { McpServer, ResourceTemplate } from '@modelcontextprotocol/sdk/server/mcp.js'
-import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
-import { z } from 'zod'
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { z } from 'zod';
 
-// 创建MCP服务器实例
 const server = new McpServer({
-  name: 'demo-server',
-  version: '1.0.0',
-})
+  name: 'fq-weapp-ui-mcp',
+  version: '0.1.0',
+});
 
-// 添加加法工具
-server.registerTool("add", {
-  title: '加法工具',
-  description: '将两个数字相加',
-  inputSchema: {
-    a: z.number(),
-    b: z.number(),
-  },
-},
-  async ({ a, b }) => ({
-    content: [{ type: 'text', text: `结果是：${a + b}` }]
-  })
-)
-
-// 添加动态问候资源
-server.registerResource(
-  "greeting",
-  new ResourceTemplate("greeting://{name}", {
-    list: undefined,
-  }),
+server.registerTool(
+  'get-weather',
   {
-    title: "问候资源",
-    description: "根据名称生成个性化问候语",
+    title: 'Get Weather Information',
+    description: 'Get weather information for a given city',
+    inputSchema: {
+      city: z.string().describe('Name of the city to get weather for hahah'),
+    },
   },
-  async (uri, { name }) => ({
-    contents: [{ uri: uri.href, text: `你好，${name}！` }]
-  })
-)
+  async ({ city }) => {
+    try {
+      const response = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${city}&count=10&language=en&format=json`);
+      const data = await response.json();
 
-// 通过标准输入输出接收和发送消息
-const transport = new StdioServerTransport()
-await server.connect(transport);
+      if (data.results.length === 0) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `No results found for city: ${city}`
+            }
+          ]
+        };
+      }
+
+      const { latitude, longitude } = data.results[0];
+      const weatherResponse = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&hourly=temperature_2m,precipitation,apparent_temperature,relative_humidity_2m&forecast_days=1`);
+
+      const weatherData = await weatherResponse.json();
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(weatherData, null, 2)
+          }
+        ]
+      };
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Error fetching weather data: ${message}`
+          }
+        ]
+      };
+    }
+  }
+);
+
+const transport = new StdioServerTransport();
+server.connect(transport);
+console.error('[mcp] server connected');
