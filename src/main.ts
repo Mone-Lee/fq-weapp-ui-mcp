@@ -6,7 +6,7 @@ import * as path from 'path';
 import { createRequire } from 'module';
 
 // 组件配置
-const COMPONENT_PACKAGES = {
+const COMPONENT_PACKAGES: Record<string, { name: string; displayName: string; npmPackageName: string }> = {
   'fq-weapp-ui': {
     name: 'fq-weapp-ui',
     displayName: '@fq/fq-weapp-ui (基础组件库)',
@@ -20,10 +20,12 @@ const COMPONENT_PACKAGES = {
 };
 
 // 从已安装的 npm 包中获取组件信息
-function getComponentsFromNpmPackage(packageName: string): { components: string[], version?: string, packagePath?: string } | null {
+function getComponentsFromNpmPackage(
+  packageName: string,
+): { components: string[], version?: string, packagePath?: string } | null {
   try {
     // 在 ES 模块中使用 createRequire 来使用 require.resolve
-    const require = createRequire(import.meta.url);
+    const require = createRequire(path.join(process.cwd(), 'package.json'))
     const packageJsonPath = require.resolve(`${packageName}/package.json`);
 
     if (!packageJsonPath) {
@@ -194,8 +196,10 @@ function getComponentsFromDirectory(componentsDir: string): string[] {
 }
 
 // 获取指定组件库的组件列表
-function getComponents(packageName: string): { components: string[], source: string, version?: string } {
-  const config = COMPONENT_PACKAGES[packageName as keyof typeof COMPONENT_PACKAGES];
+function getComponents(
+  packageName: string,
+): { components: string[], source: string, version?: string } {
+  const config = COMPONENT_PACKAGES[packageName];
 
   if (!config) {
     return {
@@ -206,10 +210,11 @@ function getComponents(packageName: string): { components: string[], source: str
 
   // 策略1：尝试从已安装的 npm 包中获取组件
   const npmResult = getComponentsFromNpmPackage(config.npmPackageName);
+  const baseSourceNote = process.cwd();
   if (npmResult && npmResult.components.length > 0) {
     return {
       components: npmResult.components,
-      source: `从已安装的 npm 包获取 (版本 ${npmResult.version})`,
+      source: `从项目 ${baseSourceNote} 已安装的 npm 包获取 (版本 ${npmResult.version})`,
       ...(npmResult.version && { version: npmResult.version })
     };
   }
@@ -252,8 +257,8 @@ function getDefaultComponents(packageName: string): string[] {
   const defaults: Record<string, string[]> = {
     'fq-weapp-ui': [
       'FQButton', 'FQBadge', 'FQModal', 'FQSpriteIcon', 'FQTitle', 'FQText',
-      'FQNumeral', 'FQInput', 'FQForm', 'FQSpaceCompact', 'FQNoticeBar',
-      'FQTextarea', 'FQCard', 'FQTag', 'FQWaterMark'
+      'FQNumeral', 'FQInputNew', 'FQForm', 'FQSpaceCompact', 'FQNoticeBar',
+      'FQTextareaNew', 'FQCard', 'FQTag', 'FQWaterMark'
     ],
     'fq-weapp-ui-pro': [
       'FQGoodsCard', 'FQSearch', 'FQPrice'
@@ -316,11 +321,7 @@ server.registerTool(
 
       // 根据数据来源添加不同的提示
       if (source.includes('已安装的 npm 包')) {
-        response += `\n\n✅ 组件列表基于您当前安装的版本，确保与实际使用的组件一致`;
-      } else if (source.includes('开发环境')) {
-        response += `\n\n🔧 当前从开发环境获取组件列表（开发模式）`;
-      } else if (source.includes('内置默认列表')) {
-        response += `\n\n⚠️  使用内置默认列表，建议安装 ${config.npmPackageName} 包以获取最新组件信息`;
+        response += `\n\n✅ 组件列表基于您当前安装的版本，可能不是最新版本。请通过 http://npm.ifengqun.com:4873/ 查看组件库版本`;
       }
 
       return {
