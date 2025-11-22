@@ -4,6 +4,12 @@ import { z } from 'zod';
 import * as fs from 'fs';
 import * as path from 'path';
 import { createRequire } from 'module';
+import { getComponentDemo } from './utils/api.js';
+
+/**
+ * 全局变量，存储会话级别的 GitLab 令牌
+ */
+let GITLAB_TOKEN: string | undefined;
 
 // 组件配置
 const COMPONENT_PACKAGES: Record<string, { name: string; displayName: string; npmPackageName: string }> = {
@@ -219,25 +225,7 @@ function getComponents(
     };
   }
 
-  // 策略2：如果 npm 包未安装，尝试从开发环境的源码获取（用于 monorepo 开发）
-  // const exportComponents = getComponentsFromExportFile(config.fallbackIndexPath);
-  // if (exportComponents.length > 0) {
-  //   return {
-  //     components: exportComponents,
-  //     source: '从开发环境源码获取'
-  //   };
-  // }
-
-  // 策略3：扫描组件目录
-  // const directoryComponents = getComponentsFromDirectory(config.fallbackComponentsDir);
-  // if (directoryComponents.length > 0) {
-  //   return {
-  //     components: directoryComponents,
-  //     source: '从开发环境组件目录扫描'
-  //   };
-  // }
-
-  // 策略4：返回预定义的默认组件列表（作为最后的兜底方案）
+  // 策略2：返回预定义的默认组件列表（作为兜底方案）
   const defaultComponents = getDefaultComponents(packageName);
   if (defaultComponents.length > 0) {
     return {
@@ -273,6 +261,11 @@ const server = new McpServer({
   version: '0.0.1',
 });
 
+/**
+ * 列出组件库的所有组件 list-components
+ * 输入参数: 组件库名称 (fq-weapp-ui 或 fq-weapp-ui-pro)
+ * 输出: 组件名列表
+ */
 server.registerTool(
   'list-components',
   {
@@ -339,6 +332,111 @@ server.registerTool(
           {
             type: "text",
             text: `❌ 获取组件列表时发生错误: ${error instanceof Error ? error.message : String(error)}`
+          }
+        ]
+      };
+    }
+  }
+);
+
+/**
+ * 增加记忆型工具 set-gitlab-token 存储本次会话令牌。
+ */
+server.registerTool(
+  'set-gitlab-token',
+  {
+    title: 'Set or query GitLab token',
+    description: 'Set a session GitLab Personal Access Token for demo fetching; omit to query current state.',
+    inputSchema: {
+      token: z.string().optional().describe('GitLab PAT; omit to only query')
+    }
+  },
+  async ({ token }) => {
+    if (token) {
+      GITLAB_TOKEN = token.trim();
+      return {
+        content: [{ type: 'text', text: '✅ GitLab token stored for this session.' }]
+      };
+    }
+    return {
+      content: [
+        {
+          type: 'text',
+          text: GITLAB_TOKEN
+            ? 'Current session token is set.'
+            : 'No session token set. You can set one via set-gitlab-token or pass token to get-component-demo.'
+        }
+      ]
+    };
+  }
+);
+
+/**
+ * 返回组件的示例代码 get-component-demo
+ * 输入参数: 组件名称 (如 FQButton)
+ * 输出: 组件的示例代码
+ */
+server.registerTool(
+  'get-component-demo',
+  {
+    title: '获取组件的示例代码',
+    description: '根据组件名称，返回该组件的示例代码。',
+    inputSchema: {
+      componentName: z.string().describe('组件的名称 (如 FQButton)'),
+      token: z.string().optional().describe('可选：GitLab Personal Access Token（不传则使用会话或环境变量）')
+    },
+  },
+  async ({ componentName, token }) => {
+    try {
+      const effectiveToken = token || GITLAB_TOKEN || process.env.GITLAB_PERSONAL_ACCESS_TOKEN;
+      const result = await getComponentDemo(componentName, effectiveToken);
+
+      if (!result.ok) {
+        // Missing token specific guidance
+        if (result.reason === 'Missing GitLab personal access token') {
+          return {
+            content: [
+              {
+                type: 'text',
+                text:
+                  `❌ 缺少 GitLab Token。\n组件: ${componentName}\nURL: ${result.url}\n\n请执行以下任一方式:\n` +
+                  `1. 设置环境变量: export GITLAB_PERSONAL_ACCESS_TOKEN=your_token\n` +
+                  `2. 先调用工具 set-gitlab-token 传入 token\n` +
+                  `3. 本次直接传递 token 参数调用 get-component-demo\n\n示例:\n- set-gitlab-token: {"token": "glpat-xxxxx"}\n- get-component-demo: {"componentName": "${componentName}", "token": "xxxxx"}`
+              }
+            ]
+          };
+        }
+
+        // Auth / not found / other errors
+        return {
+          content: [
+            {
+              type: 'text',
+              text:
+                `❌ 获取示例失败\n组件: ${componentName}\n原因: ${result.reason}\nURL: ${result.url}` +
+                (result.status ? `\n状态码: ${result.status}` : '') +
+                `\n\n排查建议:\n- 确认 DEMO_PATH_MAP 中是否有该组件映射\n- 检查分支 ref 是否正确 (当前: test)\n- 若是 401/403，检查 token 是否有效且权限足够`
+            }
+          ]
+        };
+      }
+
+      // Success: return demo content
+      return {
+        content: [
+          {
+            type: 'text',
+            text: result.content || ''
+          }
+        ]
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: 'text',
+            text: `❌ 获取组件示例代码时发生错误: ${error instanceof Error ? error.message : String(error)}`
           }
         ]
       };
