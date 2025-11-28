@@ -7,7 +7,9 @@ import { setGitlabTokenSchema, setGitlabTokenHandler } from './server/tools/setG
 
 const server = new McpServer({
   name: 'fq-weapp-ui-mcp',
-  version: '0.0.1',
+  version: '1.0.0',
+}, {
+  instructions: 'fq-weapp-ui 组件库 和 fq-weapp-ui-pro 组件库资料查询服务，提供组件列表、文档、源码等查询功能。',
 });
 
 server.registerTool('list-components', {
