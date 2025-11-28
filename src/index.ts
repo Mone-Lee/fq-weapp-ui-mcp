@@ -1,63 +1,32 @@
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { z } from 'zod';
+
+import { listComponentsSchema, listComponentsHandler } from './server/tools/listComponents.js';
+import { getComponentDemoSchema, getComponentDemoHandler } from './server/tools/getComponentDemo.js';
+import { setGitlabTokenSchema, setGitlabTokenHandler } from './server/tools/setGitlabToken.js';
 
 const server = new McpServer({
   name: 'fq-weapp-ui-mcp',
-  version: '0.1.0',
+  version: '0.0.1',
 });
 
-server.registerTool(
-  'get-weather',
-  {
-    title: 'Get Weather Information',
-    description: 'Get weather information for a given city',
-    inputSchema: {
-      city: z.string().describe('Name of the city to get weather for hahah'),
-    },
-  },
-  async ({ city }) => {
-    try {
-      const response = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${city}&count=10&language=en&format=json`);
-      const data = await response.json();
+server.registerTool('list-components', {
+  title: '列出组件库的所有组件',
+  description: '根据组件库名称，列出该组件库的所有组件列表。',
+  inputSchema: listComponentsSchema
+}, listComponentsHandler);
 
-      if (data.results.length === 0) {
-        return {
-          content: [
-            {
-              type: "text",
-              text: `No results found for city: ${city}`
-            }
-          ]
-        };
-      }
+server.registerTool('get-component-demo', {
+  title: '获取组件的示例代码',
+  description: '根据组件名称，返回该组件的示例代码。',
+  inputSchema: getComponentDemoSchema
+}, getComponentDemoHandler);
 
-      const { latitude, longitude } = data.results[0];
-      const weatherResponse = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&hourly=temperature_2m,precipitation,apparent_temperature,relative_humidity_2m&forecast_days=1`);
-
-      const weatherData = await weatherResponse.json();
-
-      return {
-        content: [
-          {
-            type: "text",
-            text: JSON.stringify(weatherData, null, 2)
-          }
-        ]
-      };
-    } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : String(error);
-      return {
-        content: [
-          {
-            type: "text",
-            text: `Error fetching weather data: ${message}`
-          }
-        ]
-      };
-    }
-  }
-);
+server.registerTool('set-gitlab-token', {
+  title: '设置/查询 GitLab Token',
+  description: '设置会话级别的 GitLab Token，或查询当前状态。',
+  inputSchema: setGitlabTokenSchema
+}, setGitlabTokenHandler);
 
 const transport = new StdioServerTransport();
 server.connect(transport);
