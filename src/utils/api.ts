@@ -1,7 +1,7 @@
-import { DEMO_PATH_MAP } from "../consts/demo.js";
+import { FULL_DEMO_PATH_MAP } from "../consts/demo.js";
 
 const projectId = '175';
-const ref = 'test'; // 分支名
+const ref = 'test';
 
 export interface ComponentDemoResult {
   ok: boolean;
@@ -15,7 +15,7 @@ export const getComponentDemo = async (
   componentName: string,
   token?: string,
 ): Promise<ComponentDemoResult> => {
-  const pathInMap = DEMO_PATH_MAP[componentName];
+  const pathInMap = FULL_DEMO_PATH_MAP[componentName];
   if (!pathInMap) {
     return {
       ok: false,
