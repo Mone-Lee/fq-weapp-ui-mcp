@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { COMPONENT_PACKAGES } from '../consts/demo.js';
+import { COMPONENT_PACKAGES } from '../consts/package.js';
 import { createRequire } from 'module';
 
 // 从已安装的 npm 包中获取组件信息
