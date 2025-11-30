@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { getComponents } from '../../utils/component.js';
-import { COMPONENT_PACKAGES } from '../../consts/demo.js';
+import { COMPONENT_PACKAGES } from '../../consts/package.js';
 
 export const listComponentsSchema = {
   name: z.string().describe('组件库名称 (fq-weapp-ui 或 fq-weapp-ui-pro)')

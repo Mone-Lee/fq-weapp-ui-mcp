@@ -3,6 +3,7 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 
 import { listComponentsSchema, listComponentsHandler } from './server/tools/listComponents.js';
 import { getComponentDemoSchema, getComponentDemoHandler } from './server/tools/getComponentDemo.js';
+import { getComponentSourceSchema, getComponentSourceHandler } from './server/tools/getComponentSource.js';
 import { setGitlabTokenSchema, setGitlabTokenHandler } from './server/tools/setGitlabToken.js';
 
 const server = new McpServer({
@@ -23,6 +24,12 @@ server.registerTool('get-component-demo', {
   description: '根据组件名称，返回该组件的示例代码。',
   inputSchema: getComponentDemoSchema
 }, getComponentDemoHandler);
+
+server.registerTool('get-component-source-code', {
+  title: '获取组件的源码',
+  description: '根据组件名称，返回该组件的源码。',
+  inputSchema: getComponentSourceSchema
+}, getComponentSourceHandler);
 
 server.registerTool('set-gitlab-token', {
   title: '设置/查询 GitLab Token',
