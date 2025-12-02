@@ -1,6 +1,6 @@
 {
   "name": "fq-weapp-ui-mcp",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "MCP server for fq-weapp-ui and fq-weapp-ui-pro component library documentation and demo",
   "main": "build/index.js",
   "type": "module",
