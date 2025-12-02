@@ -1,4 +1,3 @@
-```markdown
 # fq-weapp-ui-mcp
 
 <!-- Language Switch Index -->
@@ -172,4 +171,3 @@ MIT
 ### 作者
 
 Mone-Lee <limengyi.ml@gmail.com>
-```
