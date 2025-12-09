@@ -33,35 +33,7 @@ npx fq-weapp-ui-mcp
 
 ### 使用方法
 
-#### 启动 MCP 服务
-
-```bash
-npx fq-weapp-ui-mcp
-```
-
-#### VS Code 集成
-
-在项目根目录添加 `.vscode/mcp.json`：
-
-```json
-{
-  "servers": {
-    "fq-weapp-ui-mcp": {
-      "type": "stdio",
-      "command": "npx",
-      "args": ["fq-weapp-ui-mcp"]
-    }
-  }
-}
-```
-
-#### 环境变量
-
-设置 GitLab 个人访问令牌，用于拉取示例和源码：
-
-```bash
-export GITLAB_PERSONAL_ACCESS_TOKEN=你的token
-```
+https://www.yuque.com/camillelimengyi/rvimlc/accdd8xgp7yf5ho0?singleDoc# 《fq-weapp-ui-mcp使用说明》
 
 ### 工具列表
 
@@ -119,35 +91,7 @@ npx fq-weapp-ui-mcp
 
 ### Usage
 
-#### Run MCP Server
-
-```bash
-npx fq-weapp-ui-mcp
-```
-
-#### VS Code Integration
-
-Add to `.vscode/mcp.json` in your project:
-
-```json
-{
-  "servers": {
-    "fq-weapp-ui-mcp": {
-      "type": "stdio",
-      "command": "npx",
-      "args": ["fq-weapp-ui-mcp"]
-    }
-  }
-}
-```
-
-#### Environment Variables
-
-Set your GitLab personal access token for demo/source code fetching:
-
-```bash
-export GITLAB_PERSONAL_ACCESS_TOKEN=your_token
-```
+https://www.yuque.com/camillelimengyi/rvimlc/accdd8xgp7yf5ho0?singleDoc# 
 
 ### Tools
 
