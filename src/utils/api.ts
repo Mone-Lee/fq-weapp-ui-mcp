@@ -1,5 +1,6 @@
 import { FULL_DEMO_PATH_MAP } from "../consts/demo.js";
 import { FULL_SOURCE_CODE_PATH_MAP } from "../consts/source.js";
+import { parseToken } from './args.js';
 
 const projectId = '175';
 const ref = 'test';
@@ -21,11 +22,15 @@ const fetchGitlabFile = async (
   if (!pathInMap) {
     return { ok: false, reason: `Component ${componentName} not found in mapping`, url: undefined };
   }
+
   const apiUrl = `https://git.ifengqun.com/api/v4/projects/${projectId}/repository/files/${encodeURIComponent(pathInMap)}/raw?ref=${ref}`;
-  const effectiveToken = token || process.env.GITLAB_PERSONAL_ACCESS_TOKEN || '';
+
+  const argsToken = parseToken();
+  const effectiveToken = token || process.env.GITLAB_PERSONAL_ACCESS_TOKEN || argsToken || '';
   if (!effectiveToken) {
     return { ok: false, reason: 'Missing GitLab personal access token', url: apiUrl };
   }
+
   try {
     const response = await fetch(apiUrl, {
       headers: { 'PRIVATE-TOKEN': effectiveToken }
