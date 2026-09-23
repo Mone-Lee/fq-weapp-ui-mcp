@@ -10,7 +10,7 @@ const SOURCE_CODE_PATH_MAP: Record<string, string> = {
   FQCheckbox: 'packages/fq-weapp-ui/src/components/checkbox/index.ts',
   FQCol: 'packages/fq-weapp-ui/src/components/col/index.ts',
   FQForm: 'packages/fq-weapp-ui/src/components/form/index.ts',
-  FQInputNew: 'packages/fq-weapp-ui/src/components/input-new/index.tsx',
+  FQInput: 'packages/fq-weapp-ui/src/components/input/index.tsx',
   FQModal: 'packages/fq-weapp-ui/src/components/modal/index.tsx',
   FQNoticeBar: 'packages/fq-weapp-ui/src/components/notice-bar/index.tsx',
   FQRadio: 'packages/fq-weapp-ui/src/components/radio/index.ts',
@@ -19,7 +19,7 @@ const SOURCE_CODE_PATH_MAP: Record<string, string> = {
   FQStepper: 'packages/fq-weapp-ui/src/components/stepper/index.tsx',
   FQSwitch: 'packages/fq-weapp-ui/src/components/switch/index.tsx',
   FQTag: 'packages/fq-weapp-ui/src/components/tag/index.tsx',
-  FQTextareaNew: 'packages/fq-weapp-ui/src/components/textarea-new/index.tsx',
+  FQTextarea: 'packages/fq-weapp-ui/src/components/textarea/index.tsx',
   FQWaterMark: 'packages/fq-weapp-ui/src/components/water-mark/index.tsx',
 }
 

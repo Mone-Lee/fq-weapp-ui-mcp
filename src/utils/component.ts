@@ -121,8 +121,8 @@ function getDefaultComponents(packageName: string): string[] {
   const defaults: Record<string, string[]> = {
     'fq-weapp-ui': [
       'FQButton', 'FQBadge', 'FQModal', 'FQSpriteIcon', 'FQTitle', 'FQText',
-      'FQNumeral', 'FQInputNew', 'FQForm', 'FQSpaceCompact', 'FQNoticeBar',
-      'FQTextareaNew', 'FQCard', 'FQTag', 'FQWaterMark'
+      'FQNumeral', 'FQInput', 'FQForm', 'FQSpaceCompact', 'FQNoticeBar',
+      'FQTextarea', 'FQCard', 'FQTag', 'FQWaterMark'
     ],
     'fq-weapp-ui-pro': [
       'FQGoodsCard', 'FQSearch', 'FQPrice'

@@ -10,7 +10,7 @@ const DEMO_PATH_MAP: Record<string, string> = {
   FQCheckbox: 'packages/fq-weapp-ui-doc/docs/components/form/Checkbox 复选框.mdx',
   FQCol: 'packages/fq-weapp-ui-doc/docs/components/basic/Grid 栅格.mdx',
   FQForm: 'packages/fq-weapp-ui-doc/docs/components/form/FQForm 表单.mdx',
-  FQInputNew: 'packages/fq-weapp-ui-doc/docs/components/form/Input 输入框.mdx',
+  FQInput: 'packages/fq-weapp-ui-doc/docs/components/form/Input 输入框.mdx',
   FQModal: 'packages/fq-weapp-ui-doc/docs/components/reaction/Modal 对话框.mdx',
   FQNoticeBar: 'packages/fq-weapp-ui-doc/docs/components/reaction/NoticeBar 信息通知栏.mdx',
   FQRadio: 'packages/fq-weapp-ui-doc/docs/components/form/Radio 单选框.mdx',
@@ -19,7 +19,7 @@ const DEMO_PATH_MAP: Record<string, string> = {
   FQStepper: 'packages/fq-weapp-ui-doc/docs/components/form/Stepper 步进器.mdx',
   FQSwitch: 'packages/fq-weapp-ui-doc/docs/components/form/Switch 开关.mdx',
   FQTag: 'packages/fq-weapp-ui-doc/docs/components/presentation/Tag 标签.mdx',
-  FQTextareaNew: 'packages/fq-weapp-ui-doc/docs/components/form/TextArea 输入框.mdx',
+  FQTextarea: 'packages/fq-weapp-ui-doc/docs/components/form/TextArea 输入框.mdx',
   FQWaterMark: 'packages/fq-weapp-ui-doc/docs/components/reaction/FQWaterMark 水印.mdx',
 }
 
