@@ -31,6 +31,16 @@ npm install -g fq-weapp-ui-mcp
 npx fq-weapp-ui-mcp
 ```
 
+### 发布
+
+```bash
+npm run release                 # patch 版本
+npm run release -- minor        # minor 版本
+npm run release -- major        # major 版本
+```
+
+命令会检查 npm 登录状态（未登录时启动登录）、执行发布检查、更新版本号并发布到 npm 官方仓库。
+
 ### 使用方法
 
 https://www.yuque.com/camillelimengyi/rvimlc/accdd8xgp7yf5ho0?singleDoc# 《fq-weapp-ui-mcp使用说明》
@@ -88,6 +98,16 @@ npm install -g fq-weapp-ui-mcp
 # or use npx directly
 npx fq-weapp-ui-mcp
 ```
+
+### Publishing
+
+```bash
+npm run release                 # patch version
+npm run release -- minor        # minor version
+npm run release -- major        # major version
+```
+
+The command checks npm authentication (and starts login if needed), runs release checks, increments the version, and publishes to the official npm registry.
 
 ### Usage
 
